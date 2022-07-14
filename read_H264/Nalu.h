@@ -18,8 +18,8 @@ public:
 
 public:
     uint8_t* m_naluBuf = nullptr;  //指向nalu数据
-    int m_len = 0;               //nalu长度
-    int m_startCodeLen = 0;      //起始码的长度
+    int m_len = 0;                 //nalu长度
+    int m_startCodeLen = 0;        //起始码的长度
 };
 
 #endif //EYERH264DEOCDER_NALU_HPP

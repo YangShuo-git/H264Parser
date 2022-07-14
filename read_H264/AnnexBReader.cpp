@@ -38,14 +38,13 @@ int AnnexBReader::ReadFromFile()
 {
     int tempBufferLen = 1024;   
     uint8_t * tempbuf = (uint8_t *) malloc (tempBufferLen);
-    int readedLen = fread(tempbuf, 1, tempBufferLen, m_file);   //读取1KB的数据 （这里是循环读1024个1字节的数据，即1KB）
+    int readedLen = fread(tempbuf, 1, tempBufferLen, m_file);//读取1KB的数据（这里是循环读1024个1字节的数据，即1KB）这里会记忆上次读到的位置吗？
 
     if(readedLen > 0){
-        // 将新读取的 tempbuf 添加到旧的 buffer 之后
+        // 将新读取的 tempbuf 添加到旧的 m_buffer 之后  拼接在一起后，再传给m_buffer
         uint8_t * _buffer = (uint8_t *) malloc (m_bufferLen + tempBufferLen);  
-        memcpy(_buffer,             m_buffer, m_bufferLen);
-        memcpy(_buffer + m_bufferLen, tempbuf,    tempBufferLen);
-        m_bufferLen = m_bufferLen + tempBufferLen;
+        memcpy(_buffer, m_buffer, m_bufferLen);
+        memcpy(_buffer + m_bufferLen, tempbuf, tempBufferLen);
 
         if(m_buffer != nullptr){
             free(m_buffer);
@@ -53,17 +52,19 @@ int AnnexBReader::ReadFromFile()
         }
 
         m_buffer = _buffer;
+        //m_bufferLen = m_bufferLen + tempBufferLen;
+        m_bufferLen += tempBufferLen;
     }
-
-    free(tempbuf);
+    
+    free(tempbuf);   //为什么不释放_buffer?
 
     return readedLen;
 }
 
 //用来检查这个 buffer 的开头是不是 start code
 //如果是 start code，那么返回 true，并且会将 startCodeLen 赋值成 start code 的长度 （3 或者 4）
-//传入的参数：一个指针，和这个指针指向的数据长度
-bool AnnexBReader::CheckStartCode(int & startCodeLen, uint8_t * bufPtr, int bufLen)
+//传入的参数：一个引用，需要获得起始码的值
+bool AnnexBReader::CheckStartCode(int & startCodeLen, uint8_t *bufPtr, int bufLen)
 {
     if(bufLen <= 2){
         startCodeLen = 0;
@@ -120,7 +121,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
 
         int startCodeLen = 0;
         // Find Start Code
-        bool isStartCode = CheckStartCode(startCodeLen, tmpBuf, m_bufferLen);
+        bool isStartCode = CheckStartCode(startCodeLen, tmpBuf, m_bufferLen);   // 这里为什么不可以直接用m_buffer?
         if(!isStartCode){
             break;
         }
@@ -129,7 +130,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
 
         // Find End Code
         int endPos = -1;
-        for(int i = 2; i < m_bufferLen; i++){    // 跳过第一个起始码，找到下一个起始码
+        for(int i = 2; i < m_bufferLen; i++){    // i=2的原因：需要跳过第一个起始码，才可以找到下一个起始码
             int startCodeLen = 0;
             bool isStartCode = CheckStartCode(startCodeLen, tmpBuf + i, m_bufferLen - i);
             if(isStartCode){
@@ -141,7 +142,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
         // 找到了下一个起始码，把数据复制到NALU类中
         // 并为下一次读取作准备
         if(endPos > 0){
-            nalu.SetBuf(m_buffer, endPos);
+            nalu.SetBuf(m_buffer, endPos);   // 这里的nalu数据包括了起始码
 
             uint8_t * _buffer = (uint8_t*)malloc(m_bufferLen - endPos);
             memcpy(_buffer, m_buffer + endPos, m_bufferLen - endPos);
