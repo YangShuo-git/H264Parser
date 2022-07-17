@@ -29,7 +29,11 @@ ELSE ()
     MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-add_subdirectory(read_H264)
+
+#从这里开始编译选项
+add_subdirectory(read_h264)
+
+
 
 
 
