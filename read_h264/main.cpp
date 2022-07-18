@@ -19,12 +19,30 @@ int main(int argc, char const *argv[])
         if(ret){
             break;  
         }
-        printf("=====================\n");
-        printf("Start Code Len: %d\n", nalu.m_startCodeLen);
-        printf("NALU Buffer Len: %d\n", nalu.m_naluLen);
-        printf("%x %x %x %x %x\n", nalu.m_naluBuf[0], nalu.m_naluBuf[1], nalu.m_naluBuf[2], nalu.m_naluBuf[3], nalu.m_naluBuf[4]);
-
+        // printf("=====================\n");
+        // printf("Start Code Len: %d\n", nalu.m_startCodeLen);
+        // printf("NALU Buffer Len: %d\n", nalu.m_naluLen);
+        // printf("%x %x %x %x %x\n", nalu.m_naluBuf[0], nalu.m_naluBuf[1], nalu.m_naluBuf[2], nalu.m_naluBuf[3], nalu.m_naluBuf[4]);
         // fprintf(outputFile, "%x %x %x %x %x\n", nalu.m_naluBuf[0], nalu.m_naluBuf[1], nalu.m_naluBuf[2], nalu.m_naluBuf[3], nalu.m_naluBuf[4]);
+    
+        EBSP ebsp;
+        ret = nalu.getEBSP(ebsp);
+        if (ret)
+        {
+            break;
+        }
+        printf("*********************\n");
+        printf("EBSP Len: %d\n", ebsp.len);
+
+        RBSP rbsp;
+        ret = ebsp.getRBSP(rbsp);
+        if (ret)
+        {
+            break;
+        }
+        printf("=====================\n");
+        printf("RBSP Len: %d\n", rbsp.len);
+
     }
 
     // fclose(outputFile);

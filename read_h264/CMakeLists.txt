@@ -6,7 +6,7 @@ file(GLOB INCLUDE_LIST "*.h")
 
 aux_source_directory(. SRC)
 
-add_executable(ReadH264 ${SRC_LIST} ${INCLUDE_LIST})   #不包括h文件，也会可以运行的
+add_executable(ReadH264 ${SRC_LIST} ${INCLUDE_LIST})   #必须包含头文件
 
 
 file(

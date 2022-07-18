@@ -13,7 +13,7 @@ Nalu::~Nalu()
     }
 }
 
-int Nalu::SetBuf(uint8_t * _buf, int _len)
+int Nalu::setBuf(uint8_t * _buf, int _len)
 {
     if(m_naluBuf != nullptr){
         free(m_naluBuf);
@@ -23,6 +23,15 @@ int Nalu::SetBuf(uint8_t * _buf, int _len)
 
     m_naluBuf = (uint8_t *)malloc(m_naluLen);
     memcpy(m_naluBuf, _buf, m_naluLen);
+
+    return 0;
+}
+
+int Nalu::getEBSP(EBSP &ebsp)
+{
+    ebsp.len = m_naluLen - m_startCodeLen;
+    ebsp.buf = (uint8_t *)malloc(ebsp.len);
+    memcpy(ebsp.buf, m_naluBuf + m_naluLen ,ebsp.len);  //拷贝之前，记得给buf分配内存
 
     return 0;
 }

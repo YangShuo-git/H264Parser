@@ -1,11 +1,12 @@
-#ifndef EYERH264DEOCDER_NALU_HPP
-#define EYERH264DEOCDER_NALU_HPP
+#ifndef _NALU_H_
+#define _NALU_H_
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "EBSP.h"
 
 //用来存放读取出来的 NALU
 class Nalu {
@@ -14,7 +15,10 @@ public:
     ~Nalu();
 
     //把NALU的数据拷贝到这个对象中
-    int SetBuf(uint8_t * _buf, int _len);
+    int setBuf(uint8_t * _buf, int _len);
+
+    //提取EBSP
+    int getEBSP(EBSP &ebsp);
 
 public:
     uint8_t* m_naluBuf = nullptr;  //指向nalu数据
@@ -22,4 +26,4 @@ public:
     int m_startCodeLen = 0;        //起始码的长度
 };
 
-#endif //EYERH264DEOCDER_NALU_HPP
+#endif // _NALU_H_

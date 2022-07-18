@@ -118,15 +118,15 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
 
         uint8_t * tmpBuf = m_buffer;   // 这里为什么要用一个临时buffer？
 
-        int startCodeLen = 0;
         // Find Start Code
+        int startCodeLen = 0;
         bool isStartCode = CheckStartCode(startCodeLen, tmpBuf, m_bufferLen);  
         if(!isStartCode){
             break;    // 从这里结束读取
         }
         nalu.m_startCodeLen = startCodeLen;
 
-        // Find End Code  也就是下一个起始码
+        // Find End Code  找到了下一个起始码，就代表这次nalu结束
         int endPos = -1;
         for(int i = 2; i < m_bufferLen; i++){    // i=2的原因：需要跳过第一个起始码，才可以找到下一个起始码
             int startCodeLen = 0;
@@ -140,7 +140,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
         // 找到了下一个起始码，把数据复制到NALU类中
         // 并为下一次读取作准备
         if(endPos > 0){
-            nalu.SetBuf(m_buffer, endPos);   // 这里的nalu数据包括了起始码
+            nalu.setBuf(m_buffer, endPos);   // 这里的nalu数据包括了起始码
 
             uint8_t * leftBuf = (uint8_t*)malloc(m_bufferLen - endPos);
             memcpy(leftBuf, m_buffer + endPos, m_bufferLen - endPos);
@@ -156,8 +156,8 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
         }
         else{
             if(isEnd == true){
-                // 到达文件末尾，取所有 buffer 出来
-                nalu.SetBuf(m_buffer, m_bufferLen);
+                // 到达文件末尾，取所有 buffer 出来 是最后一个nalu
+                nalu.setBuf(m_buffer, m_bufferLen);
                 if(m_buffer != nullptr){
                     free(m_buffer);
                     m_buffer = nullptr;
