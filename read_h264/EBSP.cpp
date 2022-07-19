@@ -50,7 +50,7 @@ int EBSP::getRBSP(RBSP & rbsp)
             
         }
         rbsp.buf[newIndex] = rbsp.buf[i];
-        newIndex++;  //这里可以再完善一下，！=
+        newIndex++;
     }
     return 0;
 }
