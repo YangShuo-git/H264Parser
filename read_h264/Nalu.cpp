@@ -31,7 +31,7 @@ int Nalu::getEBSP(EBSP &ebsp)
 {
     ebsp.len = m_naluLen - m_startCodeLen;
     ebsp.buf = (uint8_t *)malloc(ebsp.len);
-    memcpy(ebsp.buf, m_naluBuf + m_naluLen ,ebsp.len);  //拷贝之前，记得给buf分配内存
+    memcpy(ebsp.buf, m_naluBuf + m_startCodeLen, ebsp.len);  //拷贝之前，记得给buf分配内存
 
     return 0;
 }

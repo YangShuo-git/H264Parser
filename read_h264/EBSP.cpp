@@ -49,7 +49,7 @@ int EBSP::getRBSP(RBSP & rbsp)
             }
             
         }
-        rbsp.buf[newIndex] = rbsp.buf[i];
+        rbsp.buf[newIndex] = buf[i];
         newIndex++;
     }
     return 0;

@@ -31,8 +31,7 @@ int main(int argc, char const *argv[])
         {
             break;
         }
-        printf("*********************\n");
-        printf("EBSP Len: %d\n", ebsp.len);
+
 
         RBSP rbsp;
         ret = ebsp.getRBSP(rbsp);
@@ -40,12 +39,14 @@ int main(int argc, char const *argv[])
         {
             break;
         }
-        printf("=====================\n");
-        printf("RBSP Len: %d\n", rbsp.len);
 
+        uint8_t naluHeader = rbsp.buf[0];
+        int forbidden_bit = (naluHeader >> 7) & 0x01;
+        int nal_ref_idc   = (naluHeader >> 5) & 0x03;
+        int nal_unit_type = (naluHeader >> 0) & 0x1f;
     }
 
-    // fclose(outputFile);
+    //fclose(outputFile);
     reader.Close();
 
     return 0;
