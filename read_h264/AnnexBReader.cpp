@@ -7,11 +7,11 @@ AnnexBReader::AnnexBReader(std::string & _filePath)
 
 AnnexBReader::~AnnexBReader()
 {
-    Close();
+    close();
 }
 
 // 用来打开文件
-int AnnexBReader::Open()
+int AnnexBReader::open()
 {
     m_file = fopen(m_filePath.c_str(), "rb");
     if(m_file == nullptr){
@@ -21,12 +21,13 @@ int AnnexBReader::Open()
 }
 
 // 用来关闭文件
-int AnnexBReader::Close()
+int AnnexBReader::close()
 {
     if(m_file != nullptr){
         fclose(m_file);
         m_file = nullptr;
     }
+    
     if(m_buffer != nullptr){
         free(m_buffer);
         m_buffer = nullptr;
@@ -38,7 +39,7 @@ int AnnexBReader::ReadFromFile()
 {
     int readFileLen = 1024;   
     uint8_t * readFileBuf = (uint8_t *) malloc (readFileLen);
-    int readedLen = fread(readFileBuf, 1, readFileLen, m_file);//读取1KB的数据（这里是循环读1024个1字节的数据，即1KB）这里会记忆上次读到的位置吗？
+    int readedLen = fread(readFileBuf, 1, readFileLen, m_file);//读取1KB的数据（这里是循环读1024个1字节的数据，即1KB）这里会记忆上次读到的位置
     if(readedLen > 0){
         // 将 新读取的readFileBuf 和 旧的m_buffer 拼接在一起 （借助一个tmpBuf）
         uint8_t * tmpbuf = (uint8_t *) malloc (m_bufferLen + readFileLen);  
@@ -71,15 +72,20 @@ bool AnnexBReader::CheckStartCode(int & startCodeLen, uint8_t *bufPtr, int bufLe
     }
 
     if(bufLen >= 4){
-        if(bufPtr[0] == 0) {
-            if (bufPtr[1] == 0) {
-                if (bufPtr[2] == 0) {
-                    if (bufPtr[3] == 1) {
+        if(bufPtr[0] == 0) 
+        {
+            if (bufPtr[1] == 0) 
+            {
+                if (bufPtr[2] == 0) 
+                {
+                    if (bufPtr[3] == 1) 
+                    {
                         startCodeLen = 4;  
                         return true;
                     }
                 }
-                if(bufPtr[2] == 1){
+                if(bufPtr[2] == 1)
+                {
                     startCodeLen = 3;
                     return true;
                 }
@@ -102,7 +108,7 @@ bool AnnexBReader::CheckStartCode(int & startCodeLen, uint8_t *bufPtr, int bufLe
     return false;
 }
 
-// 整个读取 NALU 的过程是这样的：
+// 读取 NALU 流的过程：
 // 1.先从文件中读取一个 buffer 到内存中
 // 2.然后遍历这个 buffer，遇到 startcode，就从这段 buffer 中截断出一个 NALU
 // 当内存中的 buffer 用尽后，我们再从文件中继续读取，直到读到文件末尾
@@ -126,7 +132,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
         }
         nalu.m_startCodeLen = startCodeLen;
 
-        // Find End Code  找到了下一个起始码，就代表这次nalu结束
+        // Find End Code  找到了下一个起始码，就代表可以截取一个nalu
         int endPos = -1;
         for(int i = 2; i < m_bufferLen; i++){    // i=2的原因：需要跳过第一个起始码，才可以找到下一个起始码
             int startCodeLen = 0;
@@ -137,8 +143,7 @@ int AnnexBReader::ReadNalu(Nalu & nalu)
             }
         }
 
-        // 找到了下一个起始码，把数据复制到NALU类中
-        // 并为下一次读取作准备
+        // 找到了下一个起始码，把数据复制到NALU类中，并为下一次读取作准备
         if(endPos > 0){
             nalu.setBuf(m_buffer, endPos);   // 这里的nalu数据包括了起始码
 

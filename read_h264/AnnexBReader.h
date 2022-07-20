@@ -17,14 +17,12 @@ public:
     AnnexBReader(std::string & _filePath);
     ~AnnexBReader();
 
-    // 打开文件
-    int Open();
-
-    // 关闭文件
-    int Close();
+    int open();
+    int close();
 
     // 读取一个Nalu
     int ReadNalu(Nalu &nalu);
+
 
 private:
     bool CheckStartCode(int &startCodeLen, uint8_t * bufPtr, int bufLen);
@@ -36,6 +34,7 @@ private:
     bool isEnd = false;
     uint8_t *m_buffer = nullptr;   //从file中读取的数据缓冲区
     int m_bufferLen = 0;           //从file中读取的数据长度
+
 };
 
 #endif // _ANNEXBREADER_H_
