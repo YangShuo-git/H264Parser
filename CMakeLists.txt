@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.16.3)
 project(H264PARSER VERSION 1.0.0.0)
 
 message(STATUS "CMAKE_PROJECT_NAME    = ${CMAKE_PROJECT_NAME}")
@@ -6,14 +6,15 @@ message(STATUS "PROJECT_VERSION_MAJOR = ${PROJECT_VERSION_MAJOR}")
 message(STATUS "PROJECT_VERSION_MINOR = ${PROJECT_VERSION_MINOR}")
 message(STATUS "PROJECT_VERSION_PATCH = ${PROJECT_VERSION_PATCH}")
 message(STATUS "PROJECT_VERSION_TWEAK = ${PROJECT_VERSION_TWEAK}")
+
 message(STATUS "PROJECT_HOMEPAGE_URL  = ${PROJECT_HOMEPAGE_URL}")           #没有打印出来
 message(STATUS "CMAKE_PROJECT_DESCRIPTION = ${CMAKE_PROJECT_DESCRIPTION}")  #没有打印出来
-message(STATUS "CMAKE_CURRENT_SOURCE_DIR  = ${CMAKE_SOURCE_DIR}")
-message(STATUS "CMAKE_CURRENT_BINARY_DIR  = ${CMAKE_CURRENT_BINARY_DIR}")
-message(STATUS "operation system is ${CMAKE_SYSTEM}")
+message(STATUS "PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
+message(STATUS "PROJECT_BINARY_DIR = ${PROJECT_BINARY_DIR}")
+message(STATUS "operation system: ${CMAKE_SYSTEM}")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-# set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install/)   #这个安装命令没有起作用，并未生成install
+# set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/install/)   #这个安装命令没有起作用，并未生成install
 
 IF (CMAKE_SYSTEM_NAME MATCHES "Linux")
     MESSAGE(STATUS "current platform: Linux ")
@@ -21,17 +22,16 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Windows")
     MESSAGE(STATUS "current platform: Windows")
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Android")
     MESSAGE(STATUS "current platform: Android")
-ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    MESSAGE(STATUS "current platform: Darwin")
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "Emscripten")
     MESSAGE(STATUS "current platform: Emscripten")
 ELSE ()
     MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME MATCHES "Linux")
 
-
-#从这里开始编译选项
+#从这里开始编译选项,可以增加多个子目录
 add_subdirectory(read_h264)
+
+
 
 
 
